@@ -3,9 +3,9 @@ require 'readline'
 
 module DBSCRIPT
   class World
-    attr_accessor :params, :change_set, :results
+    attr_accessor :params, :change_set, :results, :params_settings
     def initialize
-      @params, @change_set, @results = {}, {} , {}      
+      @params, @change_set, @results, @params_settings = {}, {} , {}, {}
     end
   end
 end
@@ -27,13 +27,28 @@ def desc title, detail = ""
   yield
 end
 
-change_set_data = {}
-change_results = {}
-
 def change_set name = :default
-#  hr
-#  cent "Change Set"
-#  hr
+  OptionParser.new do |opts|
+    opts.on("-y", "--yes", "Update without confirmation") do |yes|
+      params[:yes] = true
+    end
+    self.world.params_settings.each do |key, settings|
+      key_str = key.to_s
+      opt1 = "-#{key_str[0..0]}"
+      opt2 = "--#{key_str} [#{key_str}]"
+      opt3 = settings[:desc]
+      opts.on(opt1, opt2, opt3) do |value|
+        params[key] = value
+      end
+    end
+  end.parse!
+
+  self.world.params_settings.each do |key, settings|
+    unless params.has_key?(key)
+      required = settings.has_key?(:required) || settings[:required]
+      params[key] = read_input("#{settings[:desc]} : ", required)
+    end
+  end
   self.world.change_set[name] = yield
 end
 
@@ -42,8 +57,9 @@ def params
 end
 
 def param name, desc, opt={}
-  required = opt.has_key?(:required) || opt[:required]
-  params[name] ||= read_input(desc, required)
+  self.world.params_settings[name] = {:desc => desc}.merge(opt)
+#  required = opt.has_key?(:required) || opt[:required]
+#  params[name] ||= read_input(desc, required)
 end
 
 def update name = :default
@@ -74,7 +90,7 @@ def update name = :default
           raise ActiveRecord::Rollback
         end
       end
-      
+
       hr
       cent "DONE"
       hr

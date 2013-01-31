@@ -18,18 +18,11 @@ This is a single file helper to make your script easy to be written and read. I 
 
 	require File.join(File.dirname(__FILE__), '..', 'db_script_helper')
 	
-	# if you want to read params
-	OptionParser.new do |opts|
-	  opts.on("-c", "--company [company_id]", "Company Id") do |company|
-	    params[:company] = company
-	  end
-	end.parse!
-	
 	# script topic and detail description
 	desc "User Fix", "Propose : Fix user data if user is invalid" do 
 	
-	  # input company id, if passed by parameters, will ignore prompty
-	  param :company, "Company ID : ", :required => true
+	  # require parameter of company id, if passed by parameters, will ignore prompty
+	  param :company, "Company ID", :required => true
 	
 	  # you can define different data set to update
 	  change_set :invalid_users do
@@ -48,6 +41,7 @@ This is a single file helper to make your script easy to be written and read. I 
 	    puts result
 	  end
 	end
+
 
 	
 # Execution
