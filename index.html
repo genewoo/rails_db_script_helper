@@ -1,0 +1,124 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Rails db script helper by genewoo</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Rails db script helper</h1>
+        <p>a script helper make your db script clear and easy to be maintained. </p>
+
+        <p class="view"><a href="https://github.com/genewoo/rails_db_script_helper">View the Project on GitHub <small>genewoo/rails_db_script_helper</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/genewoo/rails_db_script_helper/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/genewoo/rails_db_script_helper/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/genewoo/rails_db_script_helper">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>rails_db_script_helper</h1>
+
+<p>This is a single file helper to make your script easy to be written and read. I used it in my daily job.</p>
+
+<h1>Principal</h1>
+
+<ul>
+<li>Single File to apply minimalism</li>
+<li>No dependency except std lib / Rails</li>
+<li>Command Line parameter friendly</li>
+<li>Optional Prompty for opitons</li>
+<li>Confirm before submit transaction</li>
+</ul><h1>Example Script</h1>
+
+<div class="highlight"><pre><span class="nb">require</span> <span class="no">File</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">__FILE__</span><span class="p">),</span> <span class="s1">'..'</span><span class="p">,</span> <span class="s1">'db_script_helper'</span><span class="p">)</span>
+
+<span class="c1"># script topic and detail description</span>
+<span class="n">desc</span> <span class="s2">"User Fix"</span><span class="p">,</span> <span class="s2">"Propose : Fix user data if user is invalid"</span> <span class="k">do</span> 
+
+  <span class="c1"># require parameter of company id, if passed by parameters, will ignore prompty</span>
+  <span class="n">param</span> <span class="ss">:company</span><span class="p">,</span> <span class="s2">"Company ID"</span><span class="p">,</span> <span class="ss">:required</span> <span class="o">=&gt;</span> <span class="kp">true</span>
+
+  <span class="c1"># you can define different data set to update</span>
+  <span class="n">change_set</span> <span class="ss">:invalid_users</span> <span class="k">do</span>
+    <span class="c1">#return could be one record or array of record</span>
+    <span class="no">User</span><span class="o">.</span><span class="n">find_all_by_company_id</span> <span class="n">params</span><span class="o">[</span><span class="ss">:company</span><span class="o">]</span>
+  <span class="k">end</span>
+
+  <span class="c1"># update data set you asked</span>
+  <span class="n">update</span> <span class="ss">:invalid_users</span> <span class="k">do</span> <span class="o">|</span><span class="n">rec</span><span class="o">|</span>
+    <span class="n">rec</span><span class="o">.</span><span class="n">is_deleted</span> <span class="o">=</span> <span class="kp">true</span>
+  <span class="k">end</span>
+  <span class="c1"># it will show all change set and confirm with Y/N</span>
+
+  <span class="c1"># a summary is a good change data report</span>
+  <span class="n">summary</span> <span class="ss">:invalid_users</span> <span class="k">do</span> <span class="o">|</span><span class="n">result</span><span class="o">|</span>
+    <span class="nb">puts</span> <span class="n">result</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre></div>
+
+<h1>Execution</h1>
+
+<pre><code>cd rails_app_path
+script/runner example_path.rb [options]
+</code></pre>
+
+<h1>Example Output</h1>
+
+<pre><code>================================================================================
+                                    User Fix
+================================================================================
+Propose : Fix user data if user is invalid
+================================================================================
+Company ID : 12
+================================================================================
+                                   Processing
+================================================================================
+users : 36
+     +-is_deleted : false -&gt; true
+users : 40
+     +-is_deleted : false -&gt; true
+users : 84
+     +-is_deleted : false -&gt; true
+users : 85
+     +-is_deleted : false -&gt; true
+users : 86
+     +-is_deleted : false -&gt; true
+================================================================================
+[Y]es / [N]o :N
+================================================================================
+                             QUIT without changing
+================================================================================
+</code></pre>
+
+<h1>Tips</h1>
+
+<h1>Authors</h1>
+
+<p>Gene Wu</p>
+
+<h1>License</h1>
+
+<p>MIT</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/genewoo">genewoo</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
