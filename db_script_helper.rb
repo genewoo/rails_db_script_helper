@@ -47,6 +47,8 @@ def change_set name = :default
     unless params.has_key?(key)
       required = settings.has_key?(:required) || settings[:required]
       params[key] = read_input("#{settings[:desc]} : ", required)
+    else
+      puts "#{settings[:desc]} : #{params[key]}"
     end
   end
   self.world.change_set[name] = yield
